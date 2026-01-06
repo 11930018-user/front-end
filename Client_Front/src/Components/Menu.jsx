@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from "react";
 import MenuItem from "../Layouts/MenuItem";
-import axios from "axios";
 
-// Use full URLs with protocol
+// Backend base URL (no axios)
 const API_BASE = "https://web2-project-production.up.railway.app";
-const API_URL = API_BASE; // if back-end base is the same
-
-// Optional: remove this or keep as a health check inside useEffect if needed
-// axios.get(`${API_BASE}/api/login`);
-
+const API_URL = API_BASE;
 
 // --- CartSummary + customer form ---
 const CartSummary = ({
@@ -204,7 +199,6 @@ const CartSummary = ({
   );
 };
 
-
 const Menu = () => {
   const [cart, setCart] = useState([]);
   const [activeCategory, setActiveCategory] = useState("");
@@ -229,6 +223,7 @@ const Menu = () => {
 
   const [formError, setFormError] = useState("");
 
+  // Load menu items with fetch (no axios)
   useEffect(() => {
     const fetchMenu = async () => {
       try {
@@ -236,14 +231,14 @@ const Menu = () => {
         setError("");
 
         const res = await fetch(`${API_URL}/api/menu_items`);
-        const data = await res.json();
-
         if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
           setError(data.message || "Could not load menu");
           setMenuItems([]);
           return;
         }
 
+        const data = await res.json();
         const items = data.map((row) => ({
           id: row.id,
           category: (row.category || "OTHER").toUpperCase(),
@@ -251,7 +246,6 @@ const Menu = () => {
           description:
             row.description || "Freshly prepared with quality ingredients.",
           price: Number(row.price),
-
           img:
             row.image_path && row.image_path.trim() !== ""
               ? `${API_BASE}${row.image_path}`
@@ -333,6 +327,7 @@ const Menu = () => {
     (item) => !activeCategory || item.category.toUpperCase() === activeCategory
   );
 
+  // Place online order with fetch (POST)
   const placeOnlineOrder = async () => {
     if (placing) return;
 
@@ -379,7 +374,7 @@ const Menu = () => {
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
         setFormError(
