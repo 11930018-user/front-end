@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import MenuItem from "../Layouts/MenuItem";
-import axios from "axios";
 
 const API_BASE = "web2-project-production.up.railway.app";
 
