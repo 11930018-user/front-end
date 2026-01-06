@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import MenuItem from "../Layouts/MenuItem";
+import axios from "axios";
 
-const API_BASE = "web2-project-production.up.railway.app";
+// Use full URLs with protocol
+const API_BASE = "https://web2-project-production.up.railway.app";
+const API_URL = API_BASE; // if back-end base is the same
 
-axios.get(`${API_BASE}/api/login`);
+// Optional: remove this or keep as a health check inside useEffect if needed
+// axios.get(`${API_BASE}/api/login`);
+
 
 // --- CartSummary + customer form ---
 const CartSummary = ({
@@ -199,6 +204,7 @@ const CartSummary = ({
   );
 };
 
+
 const Menu = () => {
   const [cart, setCart] = useState([]);
   const [activeCategory, setActiveCategory] = useState("");
@@ -246,10 +252,9 @@ const Menu = () => {
             row.description || "Freshly prepared with quality ingredients.",
           price: Number(row.price),
 
-          // if you switched to local images with image_path:
           img:
             row.image_path && row.image_path.trim() !== ""
-              ? `web2-project-production.up.railway.app${row.image_path}`
+              ? `${API_BASE}${row.image_path}`
               : row.image_url && row.image_url.trim() !== ""
               ? row.image_url
               : "https://images.pexels.com/photos/70497/pexels-photo-70497.jpeg?auto=compress&cs=tinysrgb&w=600",
